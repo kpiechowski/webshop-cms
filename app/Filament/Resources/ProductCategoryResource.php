@@ -62,6 +62,7 @@ class ProductCategoryResource extends Resource
     {
         return [
             //
+            
         ];
     }
 
@@ -70,6 +71,7 @@ class ProductCategoryResource extends Resource
         return [
             'index' => Pages\ListProductCategories::route('/'),
             'create' => Pages\CreateProductCategory::route('/create'),
+            'view' => Pages\ViewProductCategory::route('/{record}'),
             'edit' => Pages\EditProductCategory::route('/{record}/edit'),
         ];
     }

@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('products', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->boolean('available');
+            $table->boolean('available')->default(false);
             $table->string('slug')->unique();
             $table->text('short_description')->nullable();
             $table->longText('description')->nullable();

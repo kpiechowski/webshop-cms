@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\ProductCategory;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,6 +19,9 @@ class ProductCategoryFactory extends Factory
     {
         return [
             //
+            'name' => fake()->sentence(rand(1,2)),
+            'description' => fake()->sentence(rand(3,5)),
+            'parent_id' => null,
         ];
     }
 }

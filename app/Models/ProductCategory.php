@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Product;
 use Filament\Forms;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -39,6 +40,10 @@ class ProductCategory extends Model
             
         ];
     }
+
+    public function products(){
+        return $this->hasMany(Product::class, 'product_product_category');
+    } 
 
     public function parent(){
         return $this->belongsTo(ProductCategory::class);

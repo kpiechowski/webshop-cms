@@ -7,13 +7,14 @@ use Filament\Tables;
 use Filament\Forms\Form;
 use Filament\Pages\Page;
 use App\Models\ThemeOption;
-use Filament\Forms\Components\Select;
+use App\Models\Page as ModelsPage;
 
+use Illuminate\Support\HtmlString;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\TextInput;
 use App\Filament\Clusters\SettingsCluster;
-use App\Models\Page as ModelsPage;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Concerns\InteractsWithForms;
 
@@ -22,6 +23,7 @@ class PageSettings extends Page implements HasForms
 
     use InteractsWithForms;
 
+    public ?array $data = [];
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
@@ -40,20 +42,27 @@ class PageSettings extends Page implements HasForms
 
         return $form
             ->schema([
-                KeyValue::make('meta')
-                    ->editableValues(false),
-                Select::make('theme_option')
-                    ->label('Theme Option')
+
+                Select::make('home_page_id')
+                    ->label('Home Page')
+                    ->helperText('Sets the default page under "/" url ')
+                    ->prefixIcon('heroicon-o-home')
                     ->options(ModelsPage::all()->pluck('name', 'id'))
                     ->searchable()
-                    ->required(),
+                    ->hint(new HtmlString('<a href="' . route('home') . '" class="text-blue-400">See Page</a>'))
+                    ->default(ThemeOption::value('home_page_id'))
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (?string $state, $old) {
+                        ThemeOption::setValue('home_page_id', $state);
+                        return;
+                    }),
             ])
             ->statePath('data');
     }
 
     public function create(): void
     {
-        dd($this->form->getState());
+        dd($this->form);
     }
 
 }

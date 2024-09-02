@@ -11,14 +11,30 @@ class ThemeOption extends Model
 
     protected $guarded = [];
 
-    public static function value(string $key): string
+    public static function value(string $key): string|null
     {
-        return ThemeOption::where('key', '=', $key)->firstOrFail()->value;
+        $value = ThemeOption::where('key', '=', $key)->first('value');
+
+
+        return $value?->value;
     }
 
     public static function setValue(string $key, string $value)
     {
-        ThemeOption::create(['key' => $key, 'value' => $value]);
+
+        $existingOption = ThemeOption::where('key', $key)->first();
+
+        if (!$existingOption) {
+            ThemeOption::create(['key' => $key, 'value' => $value]);
+            return;
+        }
+
+
+        $existingOption->value = $value;
+        $existingOption->save();
+
+
+
 
         // $option = new ThemeOption();
         // $option->key = 

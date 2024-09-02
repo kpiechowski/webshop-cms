@@ -2,10 +2,13 @@
 
 namespace Database\Seeders;
 
+use App\Enums\Panel\PageStatus;
+use App\Models\Page;
 use App\Models\User;
 use App\Models\Product;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\ProductCategory;
+use App\Models\ThemeOption;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
@@ -24,18 +27,26 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
-        User::factory()->withPersonalTeam()->create([
+        $user = User::factory()->withPersonalTeam()->create([
             'name' => 'Krzysztof',
             'email' => 'kpiechowski25@gmail.com',
         ]);
 
 
+        $page = Page::factory()->create([
+            'name' => 'Home',
+            'slug' => 'home',
+            'author' => $user,
+            'status' => PageStatus::DRAFT,
+        ]);
 
+
+        ThemeOption::setValue('home_page_id', (string) $page->id);
 
         $rootCategories = ProductCategory::factory()->count(5)->create();
         $bottomCategories = new Collection();
 
-        $rootCategories->each(function ($category) use ($bottomCategories){
+        $rootCategories->each(function ($category) use ($bottomCategories) {
             $children = ProductCategory::factory()->count(3)->create([
                 'parent_id' => $category->id,
             ]);
@@ -57,9 +68,9 @@ class DatabaseSeeder extends Seeder
             // Storage::put($imageName, $imageContent);
             // $product->featured_image = $imageName;
             $product->productCategory()->save($bottomCategories->random());
-            
+
         });
 
-        
+
     }
 }

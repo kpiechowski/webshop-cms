@@ -18,7 +18,9 @@ class ProductResource extends Resource
 {
     protected static ?string $model = Product::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    // protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?int $navigationSort = 1;
+    protected static ?string $navigationGroup = 'Shop';
 
     public static function form(Form $form): Form
     {
@@ -41,15 +43,15 @@ class ProductResource extends Resource
                     ->label('Category')
                     ->badge()
                     ->alignCenter()
-                    ->url(fn(Model $record) => ProductCategoryResource::getUrl('view',['record' => $record->productCategory()->first()->id]))
+                    ->url(fn(Model $record) => ProductCategoryResource::getUrl('view', ['record' => $record->productCategory()->first()->id]))
                     ->sortable(),
-                
+
                 Tables\Columns\IconColumn::make('available')
-                    ->icon(fn (string $state): string => match ($state) {
+                    ->icon(fn(string $state): string => match ($state) {
                         '1' => 'heroicon-o-check-circle',
                         '0' => 'heroicon-o-clock',
                     })
-                    ->color(fn (string $state): string => match ($state) {
+                    ->color(fn(string $state): string => match ($state) {
                         '1' => 'success',
                         '0' => 'danger',
                     })->alignCenter(),

@@ -21,6 +21,7 @@ return new class extends Migration {
                 ->constrained('users')
                 ->nullOnDelete();
             $table->enum('status', PageStatus::toArray());
+            $table->json('page_sections')->nullable();
 
             $table->timestamps();
         });

@@ -7,7 +7,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-
+use Filament\Forms;
 use Illuminate\Support\Facades;
 use App\Filament\View\Composers;
 
@@ -25,6 +25,17 @@ class PageSectionsService
         foreach (self::$viewComposers as $section => $composer) {
             Facades\View::composer("partials.sections.$section.$section", $composer);
         }
+    }
+
+    public static function renderSectionBuilder()
+    {
+        return Forms\Components\Builder::make('page_sections')
+            ->blocks(
+                self::getPageBlocks()
+            )->columnSpanFull()
+            ->collapsible()
+            ->cloneable();
+
     }
 
     public static function getPageBlocks(): array

@@ -16,13 +16,6 @@ class PageSectionsServiceProvider extends ServiceProvider
     public function register(): void
     {
         //
-        // $this->app->singleton(PageSectionsService::class, 'PSServce');
-
-        // $this->app->singleton(PageSectionResolver::class, 'PSResolver');
-
-
-
-
     }
 
     /**

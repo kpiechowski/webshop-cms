@@ -15,17 +15,24 @@ use App\Models\ThemeOption;
 use Illuminate\Support\Str;
 use App\Enums\Panel\PageStatus;
 use Filament\Resources\Resource;
+use Filament\Forms\Components\Grid;
+use App\Filament\Traits\HasPageForm;
 use Illuminate\Support\Facades\Auth;
+use Filament\Forms\Components\Hidden;
+
+
+use Filament\Forms\Components\Section;
 use App\Livewire\Filament\Page\PageUrl;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Livewire;
-
-
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Actions\Action;
 use App\Filament\Resources\PageResource\Pages;
 use App\Filament\Services\PageSectionsService;
 
 class PageResource extends Resource
 {
+    use HasPageForm;
     protected static ?string $model = Page::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-document';
@@ -37,65 +44,17 @@ class PageResource extends Resource
 
                 Livewire::make(PageUrl::class),
 
-                Forms\Components\Split::make([
-                    Forms\Components\Section::make('Page')
-                        // ->extraAttributes(['class' => 'grow-[4]'])
-                        ->columns(2)
-                        ->columnSpan(3)
-                        ->schema([
-                            Forms\Components\TextInput::make('name')
-                                ->label("Product name")
-                                ->required()
-                                ->maxLength(255)
-                                ->afterStateUpdated(function (Set $set, ?string $state) {
-                                    return $set('slug', Str::slug($state));
-                                })
-                                ->live()
-                                ->debounce(),
-                            Forms\Components\TextInput::make('slug')
-                                ->required()
-                                ->readOnly()
-                                ->hintAction(
-                                    Action::make('edit')
-                                        ->icon('heroicon-m-clipboard')
-                                        ->requiresConfirmation()
-                                        ->action(function () {
-
-                                        })
-                                )
-                                ->suffixIcon('heroicon-o-rectangle-stack'),
-                            Forms\Components\Hidden::make('author')
-                                ->required()
-                                ->default(fn() => Auth::id()),
-                        ]),
-
-
-                    Forms\Components\Section::make()
-                        ->schema([
-                            Forms\Components\Placeholder::make('status')
-                                ->content(fn(Get $get) => $get('status'))
-                        ])
-                        ->live()
-                        ->columnSpan(2)
-                        ->grow(false)
-                ])
-
-                    ->from('md')->columnSpanFull(),
-
-
-                Forms\Components\Section::make('page_sections_wrap')
-                    ->label('Page Sections')
+                Grid::make('page_content')
+                    ->columns(12)
                     ->schema([
+                        Grid::make('page_content_main')
+                            ->columnSpan(9)
+                            ->schema(self::getPageMainContent()),
 
-                        // TODO all from service based on page's theme 
-                        Forms\Components\Builder::make('page_sections')
-                            ->blocks(
-                                PageSectionsService::getPageBlocks()
-                            )->columnSpanFull()
-                            ->collapsible()
-                            ->cloneable()
-                        ,
-                    ])->columnSpanFull()
+                        Grid::make('page_content_side')
+                            ->columnSpan(3)
+                            ->schema(self::getPageSideForm()),
+                    ]),
 
             ]);
     }

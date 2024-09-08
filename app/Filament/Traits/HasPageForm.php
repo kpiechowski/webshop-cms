@@ -19,6 +19,8 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Actions\Action;
 use App\Filament\Services\PageSectionsService;
+use Livewire\Livewire;
+use Livewire\Component;
 
 trait HasPageForm
 {
@@ -34,17 +36,22 @@ trait HasPageForm
                     TextInput::make('name')
                         ->label("Page name")
                         ->required()
-                        ->unique()
+                        ->unique(ignoreRecord: true)
                         ->maxLength(255)
-                        ->afterStateUpdated(function (Set $set, ?string $state, $livewire) {
-                            return $set('slug', Str::slug($state));
+                        ->afterStateUpdated(function (Set $set, ?string $state, Component $livewire) {
+                            $slug = Str::slug($state);
+                            // dd($livewire);
+                            $livewire->dispatch('slugUpdated', $slug);
+                            return $set('slug', $slug);
                         })
+                        ->reactive()
                         ->live()
                         ->debounce(),
 
                     TextInput::make('slug')
                         ->required()
                         ->readOnly()
+                        ->live()
                         ->hintAction(
                             Action::make('edit')
                                 ->icon('heroicon-m-clipboard')
@@ -59,13 +66,8 @@ trait HasPageForm
                         ->default(fn() => Auth::id()),
                 ]),
 
-            Forms\Components\Section::make('page_sections_wrap')
-                ->label('Page Sections')
-                ->columnSpanFull()
-                ->schema([
-                    PageSectionsService::renderSectionBuilder()
-                ])
 
+            PageSectionsService::sections(),
 
         ];
     }
@@ -85,14 +87,18 @@ trait HasPageForm
                     Actions::make([
                         Action::make('Save')
                             ->icon('heroicon-m-star')
-                            ->requiresConfirmation(),
+                            ->requiresConfirmation()
+                            ->action(function ($action) {
+                                $action->halt();
+                            }),
 
                         Action::make('Delete')
                             ->icon('heroicon-m-x-mark')
                             ->color('danger')
                             ->requiresConfirmation()
-                            ->action(function () {})
-                        ,
+                            ->action(function ($action) {
+                                $action->halt();
+                            }),
                     ]),
                 ])
                 ->live()

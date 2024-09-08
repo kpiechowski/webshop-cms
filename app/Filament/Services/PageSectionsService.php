@@ -27,9 +27,20 @@ class PageSectionsService
         }
     }
 
+    public static function sections()
+    {
+        return Forms\Components\Section::make("Page Sections")
+            // ->label('')
+            ->columnSpanFull()
+            ->schema([
+                self::renderSectionBuilder()
+            ]);
+    }
+
     public static function renderSectionBuilder()
     {
         return Forms\Components\Builder::make('page_sections')
+            ->label('Sections')
             ->blocks(
                 self::getPageBlocks()
             )->columnSpanFull()

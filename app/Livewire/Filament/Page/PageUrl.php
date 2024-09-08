@@ -10,15 +10,27 @@ class PageUrl extends Component
 
     public $slug;
 
-    public function mount($record = null)
+    protected $listeners = ['slugUpdated' => 'updateUrl'];
+
+    public function updateUrl($slug)
+    {
+        $this->slug = $slug;
+    }
+
+    public function mount(?Model $record = null)
     {
         if ($record) {
             $this->slug = $record->slug;
         }
     }
 
+    public function updatedSlug()
+    {
+        dd($this->slug);
+    }
+
     public function render()
     {
-        return view('livewire.filament.page.page-url');
+        return view('livewire.filament.page.page-url', ['slug' => $this->slug]);
     }
 }

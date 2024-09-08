@@ -42,7 +42,8 @@ class PageResource extends Resource
         return $form
             ->schema([
 
-                Livewire::make(PageUrl::class),
+                Livewire::make(PageUrl::class)
+                    ->live(),
 
                 Grid::make('page_content')
                     ->columns(12)

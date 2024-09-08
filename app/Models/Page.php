@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Enums\Panel\PageStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -13,6 +14,7 @@ class Page extends Model
 
     protected $casts = [
         'page_sections' => 'array',
+        'status' => PageStatus::class,
     ];
 
     public function author()

@@ -14,8 +14,13 @@ class PageLayout extends Component
     public function render(): View
     {
 
-        $site_name = ThemeOption::value('site_name');
+        $data = [
+            'site_name' => ThemeOption::value('site_name'),
+            'meta_description' => ThemeOption::value('site_description'),
+        ];
 
-        return view('layouts.page', compact('site_name'));
+
+
+        return view('layouts.page', )->with($data);
     }
 }

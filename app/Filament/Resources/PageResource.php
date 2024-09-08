@@ -69,8 +69,9 @@ class PageResource extends Resource
                             return ' -- home page';
                     })
                     ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
-                ,
+                Tables\Columns\TextColumn::make('status')
+                    ->badge()
+                    ->color(fn($state) => $state->color()),
                 Tables\Columns\TextColumn::make('author')
                     ->getStateUsing(fn($record) => $record->getAuthorName())
                     ->searchable(),

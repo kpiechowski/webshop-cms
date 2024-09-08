@@ -6,6 +6,10 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 
+	@if (isset($meta_description) && !empty($meta_description))
+		<meta name="description" content="{{ $meta_description }}">
+	@endif
+	
 	<title>{{ $site_name }}</title>
 
 	<!-- Fonts -->
@@ -21,6 +25,7 @@
 
 <body class="font-sans antialiased dark">
 
+	@dump(get_defined_vars())
 	<!-- Page Heading -->
 	@if (isset($header))
 		<header class="bg-white shadow dark:bg-gray-800">

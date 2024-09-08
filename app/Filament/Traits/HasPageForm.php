@@ -2,14 +2,16 @@
 
 namespace App\Filament\Traits;
 
-use App\Enums\Panel\PageStatus;
 use Filament\Forms;
 use PhpParser\Builder;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Illuminate\Support\Str;
+use App\Enums\Panel\PageStatus;
+use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Filament\Forms\Components\Hidden;
+use Filament\Forms\Components\Actions;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Tabs\Tab;
 use Filament\Forms\Components\TextInput;
@@ -30,10 +32,11 @@ trait HasPageForm
                 ->columns(2)
                 ->schema([
                     TextInput::make('name')
-                        ->label("Product name")
+                        ->label("Page name")
                         ->required()
+                        ->unique()
                         ->maxLength(255)
-                        ->afterStateUpdated(function (Set $set, ?string $state) {
+                        ->afterStateUpdated(function (Set $set, ?string $state, $livewire) {
                             return $set('slug', Str::slug($state));
                         })
                         ->live()
@@ -60,9 +63,7 @@ trait HasPageForm
                 ->label('Page Sections')
                 ->columnSpanFull()
                 ->schema([
-
                     PageSectionsService::renderSectionBuilder()
-
                 ])
 
 
@@ -74,9 +75,25 @@ trait HasPageForm
         return [
             Section::make()
                 ->schema([
-                    Forms\Components\Select::make('status')
-                        ->options(fn() => PageStatus::toArray())
+
+                    Forms\Components\Radio::make('status')
+                        ->enum(PageStatus::class)
+                        ->options(PageStatus::class)
                         ->default(fn(Get $get) => $get('status'))
+                        ->required(),
+
+                    Actions::make([
+                        Action::make('Save')
+                            ->icon('heroicon-m-star')
+                            ->requiresConfirmation(),
+
+                        Action::make('Delete')
+                            ->icon('heroicon-m-x-mark')
+                            ->color('danger')
+                            ->requiresConfirmation()
+                            ->action(function () {})
+                        ,
+                    ]),
                 ])
                 ->live()
                 ->columnSpan(2)

@@ -43,6 +43,7 @@ class PageResource extends Resource
             ->schema([
 
                 Livewire::make(PageUrl::class)
+                    ->hidden(fn(?Model $record): bool => $record === null)
                     ->live(),
 
                 Grid::make('page_content')
